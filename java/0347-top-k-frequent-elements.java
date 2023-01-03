@@ -95,28 +95,39 @@ class Solution3 {
      * Space Complexity: O(n)
      */
      public int[] topKFrequent(int[] nums, int k) {
-        Map<Integer, Integer> count = new HashMap<>();
-        List<Integer> bucket[] = new ArrayList[nums.length + 1];                
-        
-        for (int num : nums)
-            count.merge(num, 1, Integer::sum);
-        
-        for (int key : count.keySet()){
-            int freq = count.get(key);
-            if (bucket[freq] == null)
-                bucket[freq] = new ArrayList<>();
-            bucket[freq].add(key);
+        Map<Integer,Integer> freqList = new HashMap<>();
+        List<List<Integer>> bucket = new ArrayList<List<Integer>>();
+
+        for(int i=0; i < nums.length+1;i++){
+            bucket.add(null);
+        }        
+
+        for (int num : nums){
+            int value = freqList.getOrDefault(num,0);
+            freqList.put(num,++value);
         }
-        
+
+        for(int key : freqList.keySet()){
+            int freq = freqList.get(key);
+            if(bucket.get(freq) == null){
+                bucket.set(freq, new ArrayList<Integer>());
+            } 
+                bucket.get(freq).add(key);
+        }
+
         int index = 0;
         int[] res = new int[k];
-        for (int i = nums.length; i >= 0; i--)
-            if (bucket[i] != null)
-                for (int val : bucket[i]){
+
+        for(int i = nums.length; i >= 0; i--){
+            if(bucket.get(i) != null){
+                for(int val: bucket.get(i)){
                     res[index++] = val;
                     if(index == k)
                         return res;
                 }
+            }
+        }
+
         return res;
     }
        
